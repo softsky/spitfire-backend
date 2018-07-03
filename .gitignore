@@ -6,3 +6,11 @@ node_modules
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# tern
+.tern-port
+.tern-config
+
+# emacs temp files
+\#*\#
+.\#
