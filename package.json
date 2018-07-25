@@ -10,5 +10,12 @@
   "license": "ISC",
   "devDependencies": {
     "jest": "^23.2.0"
+  },
+  "dependencies": {
+    "axios-https-proxy-fix": "^0.17.1",
+    "chromedriver": "^2.40.0",
+    "qs": "^6.5.2",
+    "selenium-webdriver": "^4.0.0-alpha.1",
+    "uuid": "^3.3.2"
   }
 }
