@@ -10,6 +10,7 @@ yarn-error.log*
 # tern
 .tern-port
 .tern-config
+package-lock.json
 
 # emacs temp files
 \#*\#
