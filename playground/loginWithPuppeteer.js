@@ -93,9 +93,9 @@ async function runWithProxy() {
 	await setInputValue('input[type="email"]', account.username),
 	await setInputValue('input[type="password"]', account.password);
 
-	await page.click('input[type="button"][value="ログイン"]');
+	await page.click('input[type="button"]');
 
-	await page.waitForSelector('figure > div > div > img');
+	await page.waitForSelector('figure img');
 
 	console.info('succesfully logged in. queue size:' + paPairs.length);
 	await saveLog(`playground/success/${fname}`);
@@ -110,7 +110,7 @@ async function runWithProxy() {
     browser.close();
 }
 (async () => {
-    const numSeries = 10;
+    const numSeries = 20;
     const pipeline = util.promisify(stream.pipeline);
 
     const accountPath = __dirname + '/accounts.csv'
@@ -158,5 +158,6 @@ async function runWithProxy() {
 	    async.parallelLimit(async_queue, numSeries, results => resolve(results));
 	});
 	console.log("All done");
+        process.exit(0);
     }
 })();
