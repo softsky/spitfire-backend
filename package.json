@@ -12,6 +12,9 @@
     "jest": "^23.2.0"
   },
   "dependencies": {
+    "async": "^2.6.1",
+    "csv": "^3.1.0",
+    "proxy-chain": "^0.2.3",
     "puppeteer": "^1.6.1",
     "qs": "^6.5.2",
     "uuid": "^3.3.2"
