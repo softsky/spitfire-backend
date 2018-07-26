@@ -26,7 +26,7 @@ async function waitForTitle() {
     // Wait until a title contais SNKRS
     await driver.wait(until.titleContains('SNKRS'), 10000);
     console.log('title contains SNKRS');
-    
+
     driver.quit();
   } catch(error) {
     console.log(error);
