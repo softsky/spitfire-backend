@@ -1,6 +1,8 @@
 const { ipcMain: ipc } = require('electron');
+const newReleases = require('./mock/newReleases');
 
-// just to make sure that IPC works well
-ipc.on('PING', (event) => {
-  event.sender.send('PONG', new Date().valueOf());
+
+ipc.on('FETCH_NEW_RELEASES', (event) => {
+  event.sender.send('NEW_RELEASES', newReleases);
 })
+
