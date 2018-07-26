@@ -28,7 +28,7 @@ function login(username, password) {
     'Origin':           'https://s3.nikecdn.com',
     'Connection':       'keep-alive',
     'User-Agent':       'Mozilla/5.0 (iPhone; CPU iPhone OS 10_2 like Mac OS X) AppleWebKit/602.3.12 (KHTML, like Gecko) Mobile/14C92',
-    'X-NewRelic-ID':    'VQYGVF5SCBADUVBRBgAGVg==',
+    'X-NewRelic-ID':    'VQYGVF5SCBADUVBRBgAGVg=='
   };
 
   const params = {
@@ -42,7 +42,7 @@ function login(username, password) {
     'mobile':             'true',
     'native':             'true',
     'visit':              '1',
-    'visitor':            clientId,
+    'visitor':            clientId
   };
 
   const payload = {
@@ -58,6 +58,8 @@ function login(username, password) {
   const request = axios.create({
     headers,
     proxy,
+    httpAgent: new http.Agent({ keepAlive: true, rejectUnauthorized: false }),
+    httpsAgent: new https.Agent({ keepAlive: true, rejectUnauthorized: false})
   });
 
   return request.post('https://s3.nikecdn.com/login', queryString, payload);
@@ -75,8 +77,10 @@ function minversionRequest() {
   }
   
   const request = axios.create({
-    headers,
-    proxy,
+	  headers,
+	  proxy,
+	  httpAgent: new http.Agent({ keepAlive: true, rejectUnauthorized: false }),
+	  httpsAgent: new https.Agent({ keepAlive: true, rejectUnauthorized: false})
   });
 
   return request.get('https://s3.nikecdn.com/minversionapi/iOS.json');
@@ -90,7 +94,7 @@ function mobileRequest() {
     'User-Agent':       'Mozilla/5.0 (iPhone; CPU iPhone OS 10_2 like Mac OS X) AppleWebKit/602.3.12 (KHTML, like Gecko) Mobile/14C92',
     'Accept-Language':  'en-us',
     'Accept-Encoding':  'gzip, deflate',
-    'Connection':       'keep-alive',
+    'Connection':       'keep-alive'
   };
   
   const params = {
@@ -99,7 +103,7 @@ function mobileRequest() {
     'uxId':               'com.nike.commerce.snkrs.ios',
     'view':               'none',
     'locale':             'en_US',
-    'backendEnvironment': 'identity',
+    'backendEnvironment': 'identity'
   }
 
   const queryString = qs.stringify(params);
@@ -107,6 +111,8 @@ function mobileRequest() {
   const request = axios.create({
     headers,
     proxy,
+	  httpAgent: new http.Agent({ keepAlive: true, rejectUnauthorized: false }),
+	  httpsAgent: new https.Agent({ keepAlive: true, rejectUnauthorized: false})
   });
 
   return request.get('https://s3.nikecdn.com/unite/mobile.html', queryString);
@@ -129,7 +135,7 @@ function mobileRequest() {
     'uxId':               'com.nike.commerce.snkrs.ios',
     'view':               'none',
     'locale':             'en_US',
-    'backendEnvironment': 'identity',
+    'backendEnvironment': 'identity'
   }
 
   const queryString = qs.stringify(params);
@@ -150,7 +156,7 @@ function mobileRequest() {
     'User-Agent':       'Mozilla/5.0 (iPhone; CPU iPhone OS 10_2 like Mac OS X) AppleWebKit/602.3.12 (KHTML, like Gecko) Mobile/14C92',
     'Accept-Language':  'en-us',
     'Accept-Encoding':  'gzip, deflate',
-    'Connection':       'keep-alive',
+    'Connection':       'keep-alive'
   };
   
   const params = {
@@ -159,14 +165,14 @@ function mobileRequest() {
     'uxId':               'com.nike.commerce.snkrs.ios',
     'view':               'none',
     'locale':             'en_US',
-    'backendEnvironment': 'identity',
+    'backendEnvironment': 'identity'
   }
 
   const queryString = qs.stringify(params);
   
   const request = axios.create({
     headers,
-    proxy,
+    proxy
   });
 
   return request.get('https://s3.nikecdn.com/unite/mobile.html', queryString);
@@ -185,3 +191,24 @@ async function run() {
     console.error('error', error);
   }
 }
+
+async function appInitialization() {
+	console.info('before minversionapi');
+	await minversionRequest().then(console.log.bind(console));
+	console.info('before mobileRequest');
+	await mobileRequest().then(console.log.bind(console));
+}
+
+async function run() {
+	try {
+		console.info('before init');
+		await appInitialization();
+		console.info('before login');
+		await login();
+	} catch (error) {
+		console.error('error', error);
+	}
+}
+
+
+run();
