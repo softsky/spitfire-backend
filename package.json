@@ -9,14 +9,19 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "jest": "^23.2.0"
+    "bluebird": "^3.5.1",
+    "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1",
+    "jest": "^23.2.0",
+    "lodash": "^4.17.10",
+    "mocha": "^5.2.0"
   },
   "dependencies": {
     "async": "^2.6.1",
+    "axios-https-proxy-fix": "^0.17.1",
     "csv": "^3.1.0",
     "proxy-chain": "^0.2.3",
     "puppeteer": "^1.6.1",
-    "axios-https-proxy-fix": "^0.17.1",
     "qs": "^6.5.2",
     "uuid": "^3.3.2"
   }
