@@ -206,16 +206,16 @@ async function runScenario(scenarioFunction) {
 		return ret;		
 	    }
 
-	    async function click(x,y, delay){
-		var el = document.elementFromPoint(x,y);
-		var event = new MouseEvent( "click", { clientX: x, clientY: y, bubbles: true } )
-		el.dispatchEvent(event);
+	    // async function click(x,y, delay){
+	    // 	var el = document.elementFromPoint(x,y);
+	    // 	var event = new MouseEvent( "click", { clientX: x, clientY: y, bubbles: true } )
+	    // 	el.dispatchEvent(event);
 		
-		if(delay){
-		    await sleep(delay);
-		}
-		return ret;
-	    }
+	    // 	if(delay){
+	    // 	    await sleep(delay);
+	    // 	}
+	    // 	return ret;
+	    // }
 	    
 	    
 

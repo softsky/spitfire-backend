@@ -16,8 +16,8 @@ describe('', () => {
     });
     describe('', () => {
 	it('', (done) => {
-	    const login = require('./scenarios/login')
-	    , logout = require('./scenarios/login')
-	    runScenario([login, logout])
+	    // const login = require('./scenarios/login')
+	    // , logout = require('./scenarios/login')
+	    // runScenario([login, logout])
         });
     })})
