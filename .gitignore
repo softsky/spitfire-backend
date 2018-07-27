@@ -12,7 +12,7 @@ yarn-error.log*
 # tern
 .tern-port
 .tern-config
-
+*.js~
 playground/failure/*
 playground/success/*
 # emacs temp files

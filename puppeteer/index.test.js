@@ -20,7 +20,8 @@ describe('Puppeteer testing suite', () => {
 
     describe('Puppeteer', () => {
 	it('Should succesfully run puppeteer on execution environment', async () => {
-	    const browser = await require('puppeteer').launch({headnless: true})
+	    const browser = await require('puppeteer').launch({headnless: true, args: ['–no-sandbox',
+										       '–disable-setuid-sandbox']})
 	    const page = await browser.newPage();
 	    await browser.close();
 
