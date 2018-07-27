@@ -9,6 +9,8 @@ async function waitForTitle() {
   // const page = await browser.newPage();
   // await page.goto('https://www.nike.com/jp/launch/');
   // const title = await page.title();
+<<<<<<< Updated upstream
+=======
   
   const chromeCapabilities = webdriver.Capabilities.chrome();
   chromeCapabilities.set('chromeOptions', {args: ['--headless']});
@@ -31,6 +33,7 @@ async function waitForTitle() {
   } catch(error) {
     console.log(error);
   }
+>>>>>>> Stashed changes
 }
 
 
