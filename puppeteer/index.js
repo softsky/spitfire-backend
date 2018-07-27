@@ -174,9 +174,10 @@ async function runScenario(scenarioFunction) {
 	return async (options) => {
 	    // let document = global.document,
 	    // 	window = global.window;
-	    async function eventFire(el, etype){
+	    function el(el) {
 		// for strings attepting to query Selector or xpath
-		if(typeof el == 'string'){
+		if(typeof el !== 'object')
+		if(typeof el === 'string'){
 		    try {
 			el = document.querySelector(el);	
 		    } catch(e){
@@ -186,8 +187,11 @@ async function runScenario(scenarioFunction) {
 		// if not found, throwing Error
 		if(!el)
 		    throw new Error('Can\'t find element', el);
-		
-		console.log(el);
+		return el;
+	    }
+
+	    async function eventFire(el, etype){
+		el = el(el); // funny stuff, no? ;)
 		
 		if (el.fireEvent) {
 		    return new Promise((resolve, reject) => resolve(el.fireEvent('on' + etype)));
@@ -199,25 +203,22 @@ async function runScenario(scenarioFunction) {
 	    }
 
 	    async function click(el, delay) {
+		if(typeof el === 'array'){
+	    	    var {x,y} = {x: el[0], y: el[1]}
+		    , el = document.elementFromPoint(x,y)
+
+	    	    var event = new MouseEvent( "click", { clientX: x, clientY: y, bubbles: true } )
+	    	    el.dispatchEvent(event);
+		}
+
 		const ret = eventFire(el, 'click');
+
 		if(delay){
 		    await sleep(delay);
 		}
-		return ret;		
+		return ret;
 	    }
 
-	    // async function click(x,y, delay){
-	    // 	var el = document.elementFromPoint(x,y);
-	    // 	var event = new MouseEvent( "click", { clientX: x, clientY: y, bubbles: true } )
-	    // 	el.dispatchEvent(event);
-		
-	    // 	if(delay){
-	    // 	    await sleep(delay);
-	    // 	}
-	    // 	return ret;
-	    // }
-	    
-	    
 
 	    async function setVal(sel, val, delay) {
 		const ret = document.querySelector(sel).value = val;
@@ -238,7 +239,7 @@ async function runScenario(scenarioFunction) {
 	    await click('//*[@id="root"]/div/div/div[1]/nav/ul/li[1]/button', 5000);
 	    await setVal('input[type="email"]', options.account.username, 1000);
 	    await setVal('input[type="password"]', options.account.password, 1000);
-	    const bounds = await el('input[type="button"][value="ログイン"]').clientRect();
+	    await el('input[type="button"][value="ログイン"]').clientRect();
 	    await click('input[type="button"][value="ログイン"]', 2000);
 	}
 
