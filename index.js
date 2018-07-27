@@ -37,7 +37,7 @@ class App {
           licenseKey = await this.getLicense();
         }
         
-        const payload = checkLicense(licenseKey);
+        const payload = await checkLicense(licenseKey);
         const settings = { licenseKey };
         
         fs.writeFileSync(this.settingsFilePath, JSON.stringify(settings));
@@ -45,7 +45,6 @@ class App {
         
         sender.send('VALIDATE_LICENSE_KEY_SUCCESS', payload);
       } catch (error) {
-        console.log('error', error);
         sender.send('VALIDATE_LICENSE_KEY_FAILURE', error);
       }
     });
