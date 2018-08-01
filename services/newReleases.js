@@ -18,14 +18,14 @@ module.exports = function fetchNewReleases() {
         symbol: '¥',
         locale: 'ja-JP',
       };
-
+      
       // TODO: make it cleaner
       const payload = response.data.objects.map(item => ({
         image: get(item, 'publishedContent.properties.coverCard.properties.squarishURL'),
         date: '6/15/2018 10:00:00 AM',
         date: moment(get(item, 'productInfo[0].merchProduct.commerceStartDate')).format('MM/DD/YYYY hh:mm'),
         name: get(item, 'publishedContent.nodes[0].properties.title'),
-        sku: get(item, 'productInfo[0].skus[0].catalogSkuId'),
+        sku: get(item, 'productInfo[0].merchProduct.styleColor'),
         price: formatCurrency(get(item, 'productInfo[0].merchPrice.currentPrice'), opts),
         id: item.id,
       }));
