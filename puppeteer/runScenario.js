@@ -32,7 +32,7 @@ async function runScenario(scenarioFunction, options) {
     console.info('Connect using proxy:', proxy, ' and account ', account);
     const browser = await puppeteer.launch({
 	headless: false,
-	slowMo: 50,
+	slowMo: 100,
 	args: [
 	    `--proxy-server=${proxyUrl}`,
 	]});
@@ -40,19 +40,22 @@ async function runScenario(scenarioFunction, options) {
 
     try {
 	await page.goto('https://www.nike.com/jp/launch/', {
-	    waitUntil: ['domcontentloaded', 'networkidle0']
+	    waitUntil: ['domcontentloaded', 'networkidle2']
 	});
 
 	await page.setViewport({width:375,height:812});
+        
 	await page.setUserAgent('Mozilla/5.0 (iPhone; CPU iPhone OS 10_2 like Mac OS X) AppleWebKit/602.3.12 (KHTML, like Gecko) Mobile/14C92');
+        
         await scenarioFunction(options, page);
+        
     } catch(e){
 	console.error(e);
 	// restoring proxy, account in our stack in case of exception
 	console.info(`Storing ${JSON.stringify({proxy, account})} back to Stack`);
 	paPairs.push({account, proxy});
     }
-    //browser.close();
+    browser.close();
 }
 (async () => {
     const stream = require('stream')
@@ -100,33 +103,16 @@ async function runScenario(scenarioFunction, options) {
     // logging
     console.info('Running tasks:', paPairs.length, ' in series ', numSeries);
 
-
-    const getScenarioFunction = () => {
-	return async (options, page) => {
-	    await page.click('button[data-qa="mobile-nav-menu-button"]');
-            await page.waitForSelector('#root > div > div > div.main-layout.no-scroll > nav > ul > li:nth-child(1) > button');
-	    await page.click('#root > div > div > div.main-layout.no-scroll > nav > ul > li:nth-child(1) > button');
-            
-            await page.waitForSelector('input[type="email"]');
-            await page.type('input[type="email"]', options.account.username);
-	    await page.waitForSelector('input[type="password"]');
-            await page.type('input[type="password"]', options.account.password);
-	    await page.click('input[type="button"][value="ログイン"]');
-            await page.waitForNavigation({waitUntil: 'networkidle0'});
-	}
-    }
-
     while(paPairs.length > 0){
 	console.log("New round");
 	// filling asyncqueue with tasks
 	const account = {username: 'okanonike@gmail.com', password: 'Okano123'}
-	const scenario = getScenarioFunction();
-	const async_queue = Array(paPairs.length).fill(() => runScenario(scenario, {account}));
+	const async_queue = Array(paPairs.length).fill(() => runScenario(require('./scenario/login'), {account}));
 	await new Promise((resolve, reject) => {
 	    async.parallelLimit(async_queue, numSeries, results => resolve(results));
 	});
 	console.log("All done");
-        //process.exit(0);
+        process.exit(0);
     }
 })();
 
