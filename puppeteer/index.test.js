@@ -37,4 +37,4 @@ describe('Puppeteer testing suite', () => {
 	});
     })
 })
- 
+
