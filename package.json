@@ -23,6 +23,8 @@
     "proxy-chain": "^0.2.3",
     "puppeteer": "^1.6.1",
     "qs": "^6.5.2",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "format-currency": "^1.0.0",
+    "moment": "^2.22.2"
   }
 }
