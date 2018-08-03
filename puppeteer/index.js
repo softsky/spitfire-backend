@@ -108,8 +108,6 @@ async function runScenario(scenarioFunction, options) {
 	    await page.click('#root > div > div > div.main-layout.no-scroll > nav > ul > li:nth-child(1) > button');
             
             await page.waitForSelector('input[type="email"]');
-            
-	    await page.waitForSelector('input[type="email"]');
             await page.type('input[type="email"]', options.account.username);
 	    await page.waitForSelector('input[type="password"]');
             await page.type('input[type="password"]', options.account.password);
