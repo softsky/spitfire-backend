@@ -23,7 +23,7 @@
         "object-shorthand": "error",
         "prefer-const": 2,
         "quotes": ["error", "single"],
-        "semi": ["error", "never"],
+        "semi": ["error", "always"],
         "space-in-parens": ["error", "never"],
         "strict": [2, "never"]
     }
