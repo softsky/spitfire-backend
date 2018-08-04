@@ -73,6 +73,7 @@ let runScenario = async (scenarioFunction) => {
 		} else {
 			await scenarioFunction({ proxy, account }, page);
 		}
+		await page.waitFor(6000)
 
 
 		await page.goto('https://www.nike.com/jp/launch/t/air-max-90-1-white-neutral-grey-black/')
