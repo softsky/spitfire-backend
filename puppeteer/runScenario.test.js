@@ -14,12 +14,14 @@ describe('Puppeteer testing suite', () => {
                 expect(options).is.of.type('object');
                 expect(options).has.property('account').of.type('object');
                 expect(options).has.property('proxy').of.type('object');
+                //expect(options).has.property('order').of.type('object'); 
             }
             , runScenario = require('./runScenario');
             const login = require('./scenario/login'),
-                  logout = require('./scenario/logout');
+                  logout = require('./scenario/logout'),
+                  purchase = require('./scenario/purchase');
             
-	    return runScenario([login, test, logout]);
+	    return runScenario([login, test, logout, purchase]);
 	}, 20000);
     })
 })
