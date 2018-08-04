@@ -34,13 +34,10 @@ let runScenario = async (scenarioFunction) => {
     }
     //require('events').EventEmitter.prototype.setMaxListeners(50);
     console.info('Connect using proxy:', proxy, ' and account ', account);
-    const browser = await puppeteer.launch({
-	headless: false,
-	slow:100,
-	// slowMo: 'r',
-	ignoreHTTPSErrors: true,
-	args: [
-		`--proxy-server=${proxyUrl}`,
+
+
+	args = [
+		proxyUrl?[`--proxy-server=${proxyUrl}`][0]:undefined,
 		// "--disable-setuid-sandbox",
 		// "--no-sandbox",
 		// "--disable-web-security",
@@ -49,21 +46,20 @@ let runScenario = async (scenarioFunction) => {
 		"--disable-gpu",
 		//"--ignore-certificate-errors",
 		// "--user-agent='Mozilla/5.0 (iPhone; CPU iPhone OS 10_2 like Mac OS X) AppleWebKit/602.3.12 (KHTML, like Gecko) Mobile/14C92'"
-	]});
-	const pages = await browser.pages();
-	const page = pages[0];
-	await page.addScriptTag({'url':'https://code.jquery.com/jquery-3.3.1.js'}) //easier to debug selectors, will remove later
-	await page.setViewport({width:375,height:812});
-
-
+	]
     try {
         console.log('ProxyURL', proxyUrl, args);
-        const browser = await puppeteer.launch({
-	    headless: false,
-	    slowMo: 100,
-	    args: args});
-        console.log('Running');        
-        const page = await browser.newPage();
+		const browser = await puppeteer.launch({
+			headless: false,
+			slow:250,
+			// slowMo: 'r',
+			ignoreHTTPSErrors: true,
+			args: args});
+		console.log('Running');  
+		const pages = await browser.pages();
+		const page = pages[0];
+		await page.addScriptTag({'url':'https://code.jquery.com/jquery-3.3.1.js'}) //easier to debug selectors, will remove later
+		await page.setViewport({width:375,height:812});
         
 	await page.goto('https://www.nike.com/jp/launch/', {
 	    waitUntil: ['domcontentloaded', 'networkidle0']
