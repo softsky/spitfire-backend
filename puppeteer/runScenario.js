@@ -1,5 +1,4 @@
-const puppeteer = require('puppeteer')
-, proxyChain = require('proxy-chain')
+const proxyChain = require('proxy-chain')
 , csv = require('csv')
 , async = require('async')
 , fs = require('fs');
@@ -20,14 +19,19 @@ function shuffle(a) {
     return a;
 }
 
-async function runScenario(scenarioFunction, options) {
+let runScenario = async (scenarioFunction) => {
+    
     const uuid = require('uuid')
+    , puppeteer = require('puppeteer')
     , fname = uuid()
     , requests = [];
 
-    const {proxy, account} = paPairs.pop()
-    , oldProxyUrl = `http://${proxy.user}:${proxy.pwd}@${proxy.ip}:${proxy.port}`
-    , proxyUrl = await proxyChain.anonymizeProxy(oldProxyUrl);
+    let proxy, account, oldProxyUrl, proxyUrl;
+    if(paPairs.length){
+        let obj = {proxy, account} = paPairs.pop();
+        oldProxyUrl = `http://${proxy.user}:${proxy.pwd}@${proxy.ip}:${proxy.port}`
+        proxyUrl = await proxyChain.anonymizeProxy(oldProxyUrl);    
+    }
     //require('events').EventEmitter.prototype.setMaxListeners(50);
     console.info('Connect using proxy:', proxy, ' and account ', account);
     const browser = await puppeteer.launch({
@@ -53,11 +57,27 @@ async function runScenario(scenarioFunction, options) {
 
 
     try {
+        console.log('ProxyURL', proxyUrl, args);
+        const browser = await puppeteer.launch({
+	    headless: false,
+	    slowMo: 100,
+	    args: args});
+        console.log('Running');        
+        const page = await browser.newPage();
+        
 	await page.goto('https://www.nike.com/jp/launch/', {
-	    waitUntil: ['domcontentloaded', 'networkidle2']
+	    waitUntil: ['domcontentloaded', 'networkidle0']
 	});
 
 
+        if(Array.isArray(scenarioFunction)){ 
+            for(let f in scenarioFunction){
+                console.log('Executing function', f);
+                await f({proxy, account}, page);
+            }
+        } else {
+            await scenarioFunction({proxy, account}, page);
+        }
         
 	await scenarioFunction(options, page);
 	await page.goto('https://www.nike.com/jp/launch/t/air-max-90-1-white-neutral-grey-black/')
@@ -70,13 +90,16 @@ async function runScenario(scenarioFunction, options) {
 	await page.waitFor(1000)
 	await page.click('.ncss-brand.ncss-btn-black.pb3-sm.prl5-sm.pt3-sm.u-uppercase.u-full-width')
     } catch(e){
-	console.error(e);
+	console.log(e);
 	// restoring proxy, account in our stack in case of exception
 	console.info(`Storing ${JSON.stringify({proxy, account})} back to Stack`);
 	paPairs.push({account, proxy});
+    } finally{
+        //browser.close(); //will change once order functionality is done
     }
-    //browser.close();
+
 }
+
 (async () => {
     const stream = require('stream')
     , util = require('util')
@@ -85,7 +108,7 @@ async function runScenario(scenarioFunction, options) {
     const numSeries = 1;
     const pipeline = util.promisify(stream.pipeline);
 
-    const accountPath = __dirname + '/../account1.csv'
+    const accountPath = __dirname + '/../accounts.csv'
     , proxyPath = __dirname + '/../proxies1.csv'
     , accountStream = fs.createReadStream(accountPath)
     , proxyStream  = fs.createReadStream(proxyPath);
@@ -126,8 +149,8 @@ async function runScenario(scenarioFunction, options) {
     while(paPairs.length > 0){
 	console.log("New round");
 	// filling asyncqueue with tasks
-	const account = {username: 'okanonike@gmail.com', password: 'Okano123'}
-	const async_queue = Array(paPairs.length).fill(() => runScenario(require('./scenario/login'), {account}));
+	//const account = {username: 'okanonike@gmail.com', password: 'Okano123'}
+	const async_queue = Array(paPairs.length).fill(() => runScenario(require('./scenario/login')));
 	await new Promise((resolve, reject) => {
 	    async.parallelLimit(async_queue, numSeries, results => resolve(results));
 	});
@@ -136,4 +159,4 @@ async function runScenario(scenarioFunction, options) {
     }
 })();
 
-module.exports = {runScenario}
+module.exports = runScenario

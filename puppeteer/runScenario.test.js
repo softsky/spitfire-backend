@@ -13,27 +13,28 @@ describe('Puppeteer testing suite', () => {
     let browser;
 
     beforeAll(async () => {
-    	browser = await puppeteer.launch({headnless: true});
+    	browser = await puppeteer.launch({headless: true, args: ['–no-sandbox',
+								 '–disable-setuid-sandbox']});
     });
 
     afterAll(async () => await browser.close());
 
     describe('Puppeteer', () => {
-	it('Should succesfully run puppeteer on execution environment', async () => {
-	    const browser = await require('puppeteer').launch({headnless: true, args: ['–no-sandbox',
-										       '–disable-setuid-sandbox']})
+	it('Should succesfully run puppeteer on execution environment', async (done) => {
 	    const page = await browser.newPage();
-	    await browser.close();
-
-	    return browser;
+            done();
         });
     })
 
     describe('Scenario',  () => {
-	it('Should properly load scenario', async () => {
-	    // const login = require('./scenarios/login')
-	    // , logout = require('./scenarios/login')
-	    // runScenario([login, logout])	    
+	it('Should properly load scenario', async (done) => {
+	    const testInjector = async (options, page) => {
+                expect(page).is.of.type('object1');
+            }
+            , runScenario = require('./runScenario');
+            
+	    runScenario([require('./scenario/login'), test, require('./scenario/logout')]);
+            done();
 	});
     })
 })
