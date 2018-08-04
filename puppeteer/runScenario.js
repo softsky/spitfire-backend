@@ -48,7 +48,7 @@ let runScenario = async (scenarioFunction) => {
 		// "--user-agent='Mozilla/5.0 (iPhone; CPU iPhone OS 10_2 like Mac OS X) AppleWebKit/602.3.12 (KHTML, like Gecko) Mobile/14C92'"
 	]
     try {
-        console.log('ProxyURL', proxyUrl, args);
+        console.log('ProxyURL', proxyUrl, 'args', args);
 		const browser = await puppeteer.launch({
 			headless: false,
 			slow:250,
@@ -74,7 +74,7 @@ let runScenario = async (scenarioFunction) => {
             await scenarioFunction({proxy, account}, page);
         }
         
-	await scenarioFunction(options, page);
+	await page.waitFor(2000)
 	await page.goto('https://www.nike.com/jp/launch/t/air-max-90-1-white-neutral-grey-black/')
 	// await page.waitForNavigation({waitUntil: 'networkidle0'});
 	await page.waitFor(1000)
@@ -84,6 +84,8 @@ let runScenario = async (scenarioFunction) => {
 	await page.click('.expanded li:nth-child(1)')
 	await page.waitFor(1000)
 	await page.click('.ncss-brand.ncss-btn-black.pb3-sm.prl5-sm.pt3-sm.u-uppercase.u-full-width')
+	await page.waitFor('.cart-link')
+	await page.click('.cart-link')
     } catch(e){
 	console.log(e);
 	// restoring proxy, account in our stack in case of exception

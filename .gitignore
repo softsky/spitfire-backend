@@ -19,3 +19,7 @@ playground/success/*
 # emacs temp files
 \#*\#
 .\#
+
+.DS_Store
+.vscode/launch.json
+puppeteer/.DS_Store
