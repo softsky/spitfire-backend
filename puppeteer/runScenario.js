@@ -74,13 +74,7 @@ const runScenario = async (scenarioFunction) => {
       await scenarioFunction({ proxy, account }, page);
     }
     await page.waitFor(6000);
-
-    await page.goto('https://www.nike.com/jp/launch/t/air-max-90-1-white-neutral-grey-black/');
-    await page.click('.size-grid-dropdown.size-dropdown-button-css');
-    await page.click('.expanded li:nth-child(1)');
-    await page.click('.ncss-brand.ncss-btn-black.pb3-sm.prl5-sm.pt3-sm.u-uppercase.u-full-width');
-    await page.waitFor('.cart-link');
-    await page.click('.cart-link');
+	
   } catch (e) {
     console.log(e);
     // restoring proxy, account in our stack in case of exception
@@ -142,7 +136,7 @@ const runScenario = async (scenarioFunction) => {
     console.log('New round');
     //filling asyncqueue with tasks
     //const account = {username: 'okanonike@gmail.com', password: 'Okano123'}
-    const async_queue = Array(paPairs.length).fill(() => runScenario(require('./scenario/login')));
+    const async_queue = Array(paPairs.length).fill(() => runScenario([require('./scenario/login'), require('./scenario/purchase')]));
     await new Promise((resolve, reject) => {
       async.parallelLimit(async_queue, numSeries, results => resolve(results));
     });
