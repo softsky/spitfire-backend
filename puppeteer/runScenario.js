@@ -32,30 +32,50 @@ async function runScenario(scenarioFunction, options) {
     console.info('Connect using proxy:', proxy, ' and account ', account);
     const browser = await puppeteer.launch({
 	headless: false,
-	slowMo: 100,
+	slow:100,
+	// slowMo: 'r',
+	ignoreHTTPSErrors: true,
 	args: [
-	    `--proxy-server=${proxyUrl}`,
+		`--proxy-server=${proxyUrl}`,
+		// "--disable-setuid-sandbox",
+		// "--no-sandbox",
+		// "--disable-web-security",
+		"--disable-infobars",
+		"--disable-accelerated-2d-canvas",
+		"--disable-gpu",
+		//"--ignore-certificate-errors",
+		// "--user-agent='Mozilla/5.0 (iPhone; CPU iPhone OS 10_2 like Mac OS X) AppleWebKit/602.3.12 (KHTML, like Gecko) Mobile/14C92'"
 	]});
-    const page = await browser.newPage();
+	const pages = await browser.pages();
+	const page = pages[0];
+	await page.addScriptTag({'url':'https://code.jquery.com/jquery-3.3.1.js'}) //easier to debug selectors, will remove later
+	await page.setViewport({width:375,height:812});
+
 
     try {
 	await page.goto('https://www.nike.com/jp/launch/', {
 	    waitUntil: ['domcontentloaded', 'networkidle2']
 	});
 
-	await page.setViewport({width:375,height:812});
+
         
-	await page.setUserAgent('Mozilla/5.0 (iPhone; CPU iPhone OS 10_2 like Mac OS X) AppleWebKit/602.3.12 (KHTML, like Gecko) Mobile/14C92');
-        
-        await scenarioFunction(options, page);
-        
+	await scenarioFunction(options, page);
+	await page.goto('https://www.nike.com/jp/launch/t/air-max-90-1-white-neutral-grey-black/')
+	// await page.waitForNavigation({waitUntil: 'networkidle0'});
+	await page.waitFor(1000)
+	await page.click('.size-grid-dropdown.size-dropdown-button-css')
+	await page.waitFor(1000)
+	// await page.click('.size-grid-dropdown.size-dropdown-button-css.dropdown-button-with-focus-css')
+	await page.click('.expanded li:nth-child(1)')
+	await page.waitFor(1000)
+	await page.click('.ncss-brand.ncss-btn-black.pb3-sm.prl5-sm.pt3-sm.u-uppercase.u-full-width')
     } catch(e){
 	console.error(e);
 	// restoring proxy, account in our stack in case of exception
 	console.info(`Storing ${JSON.stringify({proxy, account})} back to Stack`);
 	paPairs.push({account, proxy});
     }
-    browser.close();
+    //browser.close();
 }
 (async () => {
     const stream = require('stream')

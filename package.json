@@ -20,11 +20,12 @@
     "async": "^2.6.1",
     "axios-https-proxy-fix": "^0.17.1",
     "csv": "^3.1.0",
-    "proxy-chain": "^0.2.3",
-    "puppeteer": "^1.6.1",
-    "qs": "^6.5.2",
-    "uuid": "^3.3.2",
+    "electron": "^2.0.6",
     "format-currency": "^1.0.0",
-    "moment": "^2.22.2"
+    "moment": "^2.22.2",
+    "proxy-chain": "^0.2.3",
+    "puppeteer": "^1.5.0",
+    "qs": "^6.5.2",
+    "uuid": "^3.3.2"
   }
 }

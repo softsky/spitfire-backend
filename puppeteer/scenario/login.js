@@ -8,5 +8,5 @@ module.exports = async (options, page) => {
         await page.waitForSelector('input[type="password"]');
         await page.type('input[type="password"]', options.account.password);
         await page.click('input[type="button"][value="ログイン"]');
-        await page.waitForNavigation({waitUntil: 'networkidle0'});
+        // await page.waitForNavigation({waitUntil: 'networkidle0'});
     }
