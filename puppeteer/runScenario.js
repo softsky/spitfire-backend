@@ -67,10 +67,9 @@ let runScenario = async (scenarioFunction) => {
 
 
         if(Array.isArray(scenarioFunction)){ 
-            for(let f in scenarioFunction){
-                console.log('Executing function', f);
+            scenarioFunction.forEach(async f => {
                 await f({proxy, account}, page);
-            }
+            })
         } else {
             await scenarioFunction({proxy, account}, page);
         }
@@ -156,3 +155,4 @@ let runScenario = async (scenarioFunction) => {
 })();
 
 module.exports = runScenario
+
