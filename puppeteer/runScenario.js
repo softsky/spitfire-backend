@@ -35,11 +35,12 @@ let runScenario = async (scenarioFunction) => {
     //require('events').EventEmitter.prototype.setMaxListeners(50);
     console.info('Connect using proxy:', proxy, ' and account ', account);
     let args = proxyUrl?[`--proxy-server=${proxyUrl}`]:undefined;
-
+    let browser;
+    
     try {
         console.log('ProxyURL', proxyUrl, args);
-        const browser = await puppeteer.launch({
-	    headless: false,
+        browser = await puppeteer.launch({
+	    headless: true,
 	    slowMo: 100,
 	    args: args});
         console.log('Running');        
@@ -52,10 +53,9 @@ let runScenario = async (scenarioFunction) => {
 	await page.setViewport({width:375,height:812});
 	await page.setUserAgent('Mozilla/5.0 (iPhone; CPU iPhone OS 10_2 like Mac OS X) AppleWebKit/602.3.12 (KHTML, like Gecko) Mobile/14C92');
         if(Array.isArray(scenarioFunction)){ 
-            for(let f in scenarioFunction){
-                console.log('Executing function', f);
+            scenarioFunction.forEach(async f => {
                 await f({proxy, account}, page);
-            }
+            })
         } else {
             await scenarioFunction({proxy, account}, page);
         }
@@ -130,3 +130,4 @@ let runScenario = async (scenarioFunction) => {
 })();
 
 module.exports = runScenario
+
