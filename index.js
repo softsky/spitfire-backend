@@ -13,7 +13,7 @@ class App {
 
     this.windowBg = '#1c1e27'; // TODO: use constants
     this.settingsFilePath = path.join(homePath, '.spitfire.settings.json');
-    this.preloaderPageUrl = this.createFileUrl(path.join(__dirname, '..' ,'frontend/preloader/index.html'));    
+    this.preloaderPageUrl = this.createFileUrl(path.join(__dirname, '..', 'frontend/preloader/index.html'));
     this.welcomePageUrl = this.createFileUrl(path.join(__dirname, '..', 'frontend/welcome/index.html'));
 
     this.mainPageUrl = (
@@ -49,7 +49,7 @@ class App {
 
   getLicense() {
     const settings = fs.readFileSync(this.settingsFilePath);
-    const { licenseKey } = JSON.parse(settings);      
+    const { licenseKey } = JSON.parse(settings);
     return licenseKey;
   }
 
@@ -60,7 +60,7 @@ class App {
       frame: false,
       backgroundColor: this.windowBg,
     });
-    
+
     this.preloaderWindow.setResizable(false);
     this.preloaderWindow.loadURL(this.preloaderPageUrl);
     this.preloaderWindow.on('closed', () => this.preloaderWindow = null);
@@ -68,7 +68,7 @@ class App {
     // this.preloaderWindow.webContents.openDevTools();
   }
 
-  openWelcomePage() {    
+  openWelcomePage() {
     this.welcomeWindow = new BrowserWindow({
       width: 1155,
       height: 690,
@@ -97,8 +97,8 @@ class App {
   async checkLicense() {
     try {
       // it helps to make a better UX
-      await delay(200);      
-      const licenseKey = this.getLicense();      
+      await delay(200);
+      const licenseKey = this.getLicense();
       const response = await checkLicense(licenseKey);
       const { valid } = response.data.meta;
 
@@ -115,14 +115,14 @@ class App {
   }
 
   handleLicenseValid(sender, licenseKey) {
-    const settings = { licenseKey };        
+    const settings = { licenseKey };
     fs.writeFileSync(this.settingsFilePath, JSON.stringify(settings));
     sender.send('VALIDATE_LICENSE_KEY_SUCCESS', licenseKey);
-    
+
     if (this.welcomeWindow) {
       this.welcomeWindow.close();
     }
-    
+
     this.openMainPage();
   }
 
