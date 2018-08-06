@@ -46,6 +46,7 @@ const runScenario = async (scenarioFunction) => {
     '--disable-gpu',
     '--ignore-certificate-errors',
     '--user-agent="Mozilla/5.0 (iPhone; CPU iPhone OS 10_2 like Mac OS X) AppleWebKit/602.3.12 (KHTML, like Gecko) Mobile/14C92"',
+    '--window-size=400,812'
   ];
   try {
     console.log('ProxyURL', proxyUrl, 'args', args);
@@ -58,22 +59,19 @@ const runScenario = async (scenarioFunction) => {
     console.log('Running');
     const pages = await browser.pages();
     const page = pages[0];
-    await page.addScriptTag({ 'url': 'https://code.jquery.com/jquery-3.3.1.js' }); //easier to debug selectors, will remove later
-    await page.setViewport({ width: 375, height: 812 });
+    //await page.addScriptTag({ 'url': 'https://code.jquery.com/jquery-3.3.1.js' }); //easier to debug selectors, will remove later
+    await page.setViewport({ width: 400, height: 812 });
+
 
     await page.goto('https://www.nike.com/jp/launch/', {
       waitUntil: ['domcontentloaded', 'networkidle0'],
     });
 
-
-    if (Array.isArray(scenarioFunction)) {
-      scenarioFunction.forEach(async f => {
+    for (let f of scenarioFunction){
         await f({ proxy, account }, page);
-      });
-    } else {
-      await scenarioFunction({ proxy, account }, page);
+        await page.waitFor(3000);
     }
-    await page.waitFor(6000);
+
 	
   } catch (e) {
     console.log(e);
