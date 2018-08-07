@@ -1,6 +1,6 @@
 // jest.config.js
-const {defaults} = require('jest-config');
+const { defaults } = require('jest-config');
 module.exports = {
-    moduleFileExtensions: [...defaults.moduleFileExtensions, 'ts', 'tsx', 'js'],
-    testURL: 'http://localhost'
+  moduleFileExtensions: [...defaults.moduleFileExtensions, 'ts', 'tsx', 'js'],
+  testURL: 'http://localhost',
 };
