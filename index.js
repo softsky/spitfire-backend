@@ -8,9 +8,10 @@ const checkLicense = require('./services/checkLicense');
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
 class App {
-  constructor() {
+  init() {
     const homePath = app.getPath('home');
 
+    this.ipcRenderer = null;
     this.windowBg = '#1c1e27'; // TODO: use constants
     this.settingsFilePath = path.join(homePath, '.spitfire.settings.json');
     this.preloaderPageUrl = this.createFileUrl(path.join(__dirname, '..', 'frontend/preloader/index.html'));
@@ -43,8 +44,27 @@ class App {
   }
 
   initIpcs() {
+    ipc.on('UI_READY', this.handleUiReady.bind(this));
     ipc.on('FETCH_NEW_RELEASES', this.fetchReleases.bind(this));
     ipc.on('VALIDATE_LICENSE_KEY', this.validateLicense.bind(this));
+    ipc.on('RUN_TASK', this.runTask.bind(this));
+  }
+
+  runTask(action, task) {
+    // TODO: invoke some function or a puppeteer scenario to perform a task there
+
+    // just to make syre that it works
+    setTimeout(() => {
+      this.updateTaskStatus(task.id, 'completed');
+    }, 1000);
+  }
+
+  updateTaskStatus(id, status) {
+    this.ipcRenderer.send('UPDATE_TASK', { id, status });
+  }
+
+  handleUiReady({ sender }) {
+    this.ipcRenderer = sender;
   }
 
   getLicense() {
@@ -156,5 +176,5 @@ class App {
   }
 }
 
-module.exports = App;
+module.exports = new App();
 

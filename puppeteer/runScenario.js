@@ -126,7 +126,6 @@ const initProxies = async () => {
     } finally {
       //browser.close(); //will change once order functionality is done
     }
-
   };
 
 (async () => {

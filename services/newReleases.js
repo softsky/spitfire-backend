@@ -22,10 +22,10 @@ module.exports = function fetchNewReleases() {
       // TODO: make it cleaner
       const payload = response.data.objects.map(item => ({
         image: get(item, 'publishedContent.properties.coverCard.properties.squarishURL'),
-        //date: '6/15/2018 10:00:00 AM', FIXME: @Nazar, huh? Shouldn't it be removed?
-        date: moment(get(item, 'productInfo[0].merchProduct.commerceStartDate')).format('MM/DD/YYYY hh:mm'),
+        date: moment(get(item, 'productInfo[0].merchProduct.commerceStartDate')).local().format('MM/DD/YYYY hh:mm'),
         name: get(item, 'publishedContent.nodes[0].properties.title'),
-        sku: get(item, 'productInfo[0].merchProduct.styleColor'), // FIXME @Nazar - styleColor?
+        // for some reason, it this API right SKU is called styleColor
+        sku: get(item, 'productInfo[0].merchProduct.styleColor'),
         price: formatCurrency(get(item, 'productInfo[0].merchPrice.currentPrice'), opts),
         id: item.id,
       }));
@@ -66,5 +66,9 @@ module.exports = function fetchNewReleases() {
   // 	    browser.close();
   // 	}
   //     });
+<<<<<<< HEAD
 };
+=======
+}
+>>>>>>> b7bb42e5244804de37228e04b0373c5d966c6900
 
