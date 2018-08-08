@@ -66,9 +66,5 @@ module.exports = function fetchNewReleases() {
   // 	    browser.close();
   // 	}
   //     });
-<<<<<<< HEAD
 };
-=======
-}
->>>>>>> b7bb42e5244804de37228e04b0373c5d966c6900
 

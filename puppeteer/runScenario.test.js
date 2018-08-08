@@ -9,20 +9,20 @@ chai.use(chaiAsPromised);
 describe('Puppeteer testing suite', () => {
   describe('Scenario',  () => {
     it('Should properly load and execute set of scenarios', async (done) => {
-	    const injector = async (options, page) => {
-          expect(page).is.is.an('object');
-          expect(options).is.is.an('object');
-          expect(options).has.property('account').is.an('object');
-          expect(options).has.property('proxy').is.an('object');
-          //expect(options).has.property('order').is.an('object');
+	const injector = async (options, page) => {
+            expect(page).is.an('object');
+            expect(options).is.an('object');
+            expect(options).has.property('account').is.an('object');
+            expect(options).has.property('proxy').is.an('object');
+            //expect(options).has.property('order').is.an('object');
         }
         , runScenario = require('./runScenario');
-      const login = require('./scenario/login'),
-        logout = require('./scenario/logout'),
-        purchase = require('./scenario/purchase');
+        const login = require('./scenario/login'),
+              logout = require('./scenario/logout'),
+              purchase = require('./scenario/purchase');
 
-	    runScenario([login, injector,  purchase, logout]);
-      done();
+	runScenario([login, injector,  purchase, logout]);
+        done();
     }, 30000);
   });
 });

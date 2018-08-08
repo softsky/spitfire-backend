@@ -27,7 +27,7 @@ const initProxies = async () => {
     const pipeline = util.promisify(stream.pipeline);
 
     const accountPath = __dirname + '/../accounts.csv'
-      , proxyPath = __dirname + '/../proxies1.csv'
+      , proxyPath = __dirname + '/../proxies.csv'
       , accountStream = fs.createReadStream(accountPath)
       , proxyStream = fs.createReadStream(proxyPath);
 
@@ -107,7 +107,6 @@ const initProxies = async () => {
       await page.goto('https://www.nike.com/jp/launch/', {
         waitUntil: ['domcontentloaded', 'networkidle0'],
       });
-
 
       if (Array.isArray(scenarioFunction)) {
         scenarioFunction.forEach(async f => {
