@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-      "test": "jest --coverage --env=node",
+      "test": "jest --coverage",
       "lint": "./node_modules/.bin/eslint **/*.js"
   },
   "author": "",
