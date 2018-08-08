@@ -46,7 +46,7 @@ const runScenario = async (scenarioFunction) => {
     '--disable-gpu',
     '--ignore-certificate-errors',
     '--user-agent="Mozilla/5.0 (iPhone; CPU iPhone OS 10_2 like Mac OS X) AppleWebKit/602.3.12 (KHTML, like Gecko) Mobile/14C92"',
-    '--window-size=400,812'
+    '--window-size=400,812',
   ];
   try {
     console.log('ProxyURL', proxyUrl, 'args', args);
@@ -67,12 +67,12 @@ const runScenario = async (scenarioFunction) => {
       waitUntil: ['domcontentloaded', 'networkidle0'],
     });
 
-    for (let f of scenarioFunction){
-        await f({ proxy, account }, page);
-        await page.waitFor(3000);
+    for (const f of scenarioFunction){
+      await f({ proxy, account }, page);
+      await page.waitFor(3000);
     }
 
-	
+
   } catch (e) {
     console.log(e);
     // restoring proxy, account in our stack in case of exception
