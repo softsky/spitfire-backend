@@ -26,5 +26,14 @@
         "semi": ["error", "always"],
         "space-in-parens": ["error", "never"],
         "strict": [2, "never"]
-    }
+    },
+    "overrides": [
+        {
+            "files": [ "**/*.js", "*.js" ],
+            "excludedFiles": "node_modules/*.js",
+            "rules": {
+                "quotes": [ 2, "single" ]
+            }
+        }
+    ]
 }

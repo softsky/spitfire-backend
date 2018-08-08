@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --coverage --env=node"
+      "test": "jest --coverage --env=node",
+      "lint": "./node_modules/.bin/eslint **/*.js"
   },
   "author": "",
   "license": "ISC",
