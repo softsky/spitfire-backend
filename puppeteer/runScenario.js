@@ -1,11 +1,11 @@
 const proxyChain = require('proxy-chain')
   , csv = require('csv')
-  , async = require('async')
-  , fs = require('fs');
+  , async = require('async');
 
 const paPairs = []
   , accounts = []
-  , proxies = [];
+  , proxies = []
+  , numSeries = 1;
 
 /**
  * Shuffles array in place. ES6 version
@@ -19,116 +19,117 @@ function shuffle(a) {
   return a;
 }
 
-const runScenario = async (scenarioFunction) => {
+const initProxies = async () => {
+    const stream = require('stream')
+      , util = require('util')
+      , fs = require('fs');
 
-  const uuid = require('uuid')
-    , puppeteer = require('puppeteer')
-    , fname = uuid()
-    , requests = [];
+    const pipeline = util.promisify(stream.pipeline);
 
-  let proxy, account, oldProxyUrl, proxyUrl;
-  if (paPairs.length) {
-    const obj = { proxy, account } = paPairs.pop();
-    oldProxyUrl = `http://${proxy.user}:${proxy.pwd}@${proxy.ip}:${proxy.port}`;
-    proxyUrl = await proxyChain.anonymizeProxy(oldProxyUrl);
-  }
-  //require('events').EventEmitter.prototype.setMaxListeners(50);
-  console.info('Connect using proxy:', proxy, ' and account ', account);
+    const accountPath = __dirname + '/../accounts.csv'
+      , proxyPath = __dirname + '/../proxies1.csv'
+      , accountStream = fs.createReadStream(accountPath)
+      , proxyStream = fs.createReadStream(proxyPath);
 
+    // FIXME:
+    await pipeline(proxyStream,
+		   csv.parse({ delimiter: ':' }),
+		   csv.transform((record) => {
+		       const proxy = {
+			   ip: record[0],
+			   port: record[1],
+			   user: record[2],
+			   pwd: record[3],
+		       };
+		       proxies.push(proxy);
+		   }));
+    shuffle(proxies);
 
-  const args = [
-    proxyUrl ? [`--proxy-server=${proxyUrl}`][0] : undefined,
-    '--disable-setuid-sandbox',
-    '--no-sandbox',
-    '--disable-web-security',
-    '--disable-infobars',
-    '--disable-accelerated-2d-canvas',
-    '--disable-gpu',
-    '--ignore-certificate-errors',
-    '--user-agent="Mozilla/5.0 (iPhone; CPU iPhone OS 10_2 like Mac OS X) AppleWebKit/602.3.12 (KHTML, like Gecko) Mobile/14C92"',
-  ];
-  try {
-    console.log('ProxyURL', proxyUrl, 'args', args);
-    const browser = await puppeteer.launch({
-      headless: false,
-      slowMo: 100,
-      ignoreHTTPSErrors: true,
-      args,
-    });
-    console.log('Running');
-    const pages = await browser.pages();
-    const page = pages[0];
-    await page.addScriptTag({ 'url': 'https://code.jquery.com/jquery-3.3.1.js' }); //easier to debug selectors, will remove later
-    await page.setViewport({ width: 375, height: 812 });
+    await pipeline(accountStream,
+		   csv.parse({ delimiter: ':' }),
+		   csv.transform((record) => {
+		       proxies.unshift(proxies.pop());
+		       const username = record[0],
+		             password = record[1],
+	                     account = { username, password },
+		             proxy = proxies[0];
+		       accounts.push(account);
 
-    await page.goto('https://www.nike.com/jp/launch/', {
-      waitUntil: ['domcontentloaded', 'networkidle0'],
-    });
+		       paPairs.push({ proxy, account });
+		   }));
 
+    // shuffling our array of pairs
+    shuffle(paPairs);
 
-    if (Array.isArray(scenarioFunction)) {
-      scenarioFunction.forEach(async f => {
-        await f({ proxy, account }, page);
-      });
-    } else {
-      await scenarioFunction({ proxy, account }, page);
+    return paPairs;
+  }, runScenario = async (scenarioFunction) => {
+    const paPairs = await initProxies(); // we should make sure our proxies are loaded
+    const uuid = require('uuid');
+    const puppeteer = require('puppeteer');
+
+    let proxy, account, oldProxyUrl, proxyUrl;
+    if (paPairs.length) {
+      const obj = { proxy, account } = paPairs.pop();
+      oldProxyUrl = `http://${proxy.user}:${proxy.pwd}@${proxy.ip}:${proxy.port}`;
+      proxyUrl = await proxyChain.anonymizeProxy(oldProxyUrl);
     }
-    await page.waitFor(6000);
-	
-  } catch (e) {
-    console.log(e);
-    // restoring proxy, account in our stack in case of exception
-    console.info(`Storing ${JSON.stringify({ proxy, account })} back to Stack`);
-    paPairs.push({ account, proxy });
-  } finally {
-    //browser.close(); //will change once order functionality is done
-  }
+    //require('events').EventEmitter.prototype.setMaxListeners(50);
+    console.info('Connect using proxy:', proxy, ' and account ', account);
 
-};
+
+    const args = [
+      '--disable-setuid-sandbox',
+      '--no-sandbox',
+      '--disable-web-security',
+      '--disable-infobars',
+      '--disable-accelerated-2d-canvas',
+      '--disable-gpu',
+      '--ignore-certificate-errors',
+      '--user-agent="Mozilla/5.0 (iPhone; CPU iPhone OS 10_2 like Mac OS X) AppleWebKit/602.3.12 (KHTML, like Gecko) Mobile/14C92"',
+    ];
+    if(proxyUrl){
+      args.push(`--proxy-server=${proxyUrl}`);
+    }
+    try {
+      console.log('ProxyURL', proxyUrl, 'args', args);
+      const browser = await puppeteer.launch({
+        headless: false,
+        slowMo: 100,
+        ignoreHTTPSErrors: true,
+        args,
+      });
+      console.log('Running');
+      const pages = await browser.pages();
+      const page = pages[0];
+      await page.addScriptTag({ 'url': 'https://code.jquery.com/jquery-3.3.1.js' }); //easier to debug selectors, will remove later
+      await page.setViewport({ width: 375, height: 812 });
+
+      await page.goto('https://www.nike.com/jp/launch/', {
+        waitUntil: ['domcontentloaded', 'networkidle0'],
+      });
+
+
+      if (Array.isArray(scenarioFunction)) {
+        scenarioFunction.forEach(async f => {
+          await f({ proxy, account }, page);
+        });
+      } else {
+        await scenarioFunction({ proxy, account }, page);
+      }
+      await page.waitFor(6000);
+
+    } catch (e) {
+      console.log(e);
+      // restoring proxy, account in our stack in case of exception
+      console.info(`Storing ${JSON.stringify({ proxy, account })} back to Stack`);
+      paPairs.push({ account, proxy });
+    } finally {
+      //browser.close(); //will change once order functionality is done
+    }
+
+  };
 
 (async () => {
-  const stream = require('stream')
-    , util = require('util')
-    , fs = require('fs');
-
-  const numSeries = 1;
-  const pipeline = util.promisify(stream.pipeline);
-
-  const accountPath = __dirname + '/../accounts.csv'
-    , proxyPath = __dirname + '/../proxies1.csv'
-    , accountStream = fs.createReadStream(accountPath)
-    , proxyStream = fs.createReadStream(proxyPath);
-
-  // FIXME:
-  await pipeline(proxyStream,
-    csv.parse({ delimiter: ':' }),
-    csv.transform((record) => {
-      const proxy = {
-        ip: record[0],
-        port: record[1],
-        user: record[2],
-        pwd: record[3],
-      };
-      proxies.push(proxy);
-    }));
-
-  shuffle(proxies);
-
-  await pipeline(accountStream,
-    csv.parse({ delimiter: ':' }),
-    csv.transform((record) => {
-      proxies.unshift(proxies.pop());
-      const username = record[0]
-        , password = record[1]
-        , account = { username, password }
-        , proxy = proxies[0];
-      accounts.push(account);
-
-      paPairs.push({ proxy, account });
-    }));
-
-  // shuffling our array of pairs
-  shuffle(paPairs);
   // logging
   console.info('Running tasks:', paPairs.length, ' in series ', numSeries);
 
@@ -146,4 +147,3 @@ const runScenario = async (scenarioFunction) => {
 })();
 
 module.exports = runScenario;
-
