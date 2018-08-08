@@ -10,7 +10,7 @@ const URL = 'https://api.nike.com/product_feed/threads/v2/?anchor=0&count=8&filt
 
 module.exports = function fetchNewReleases() {
   return new Promise(async (resolve) => {
-    
+
     try {
       const response = await axios.get(URL);
       const opts = {
@@ -18,7 +18,7 @@ module.exports = function fetchNewReleases() {
         symbol: '¥',
         locale: 'ja-JP',
       };
-      
+
       // TODO: make it cleaner
       const payload = response.data.objects.map(item => ({
         image: get(item, 'publishedContent.properties.coverCard.properties.squarishURL'),
@@ -36,35 +36,35 @@ module.exports = function fetchNewReleases() {
       reject(error);
     }
   });
-    // TODO: @Nazar, I'd like to keep code below here inplace
-    //     return new Promise(async (resolve) => {
-    // 	let mockData = [];
-    // 	// P.runScenario(() => {
-    // 	//     console.log('hello from test')
-    // 	// })
-    // 	let browser;
-    // 	try {
-    // 	    browser = await puppeteer.launch({
-    // 		headless: true,
-    // 		slowMo: 0});
-    // 	    const page = await browser.newPage();
-    // 	    await page.goto('https://nike.com/jp/launch');
-    // 	    mockData.concat(await page.evaluate(
-    // 		() => Array.prototype.slice.call(document.querySelectorAll('figure'))
-    // 		    .map((item) => {
-    // 			return {
-    // 			    image: item.querySelector('img').src,
-    // 			    name: item.attributes["aria-label"],
-    // 			    href: item.querySelector('a').href
-    // 			};
-    // 		    })));
-    // 	}catch(e){
-    // 	    console.error(e);
-    // 	}
-    // 	finally{
-    // 	    resolve(mockData);
-    // 	    browser.close();
-    // 	}
-    //     });
-}
+  // TODO: @Nazar, I'd like to keep code below here inplace
+  //     return new Promise(async (resolve) => {
+  // 	let mockData = [];
+  // 	// P.runScenario(() => {
+  // 	//     console.log('hello from test')
+  // 	// })
+  // 	let browser;
+  // 	try {
+  // 	    browser = await puppeteer.launch({
+  // 		headless: true,
+  // 		slowMo: 0});
+  // 	    const page = await browser.newPage();
+  // 	    await page.goto('https://nike.com/jp/launch');
+  // 	    mockData.concat(await page.evaluate(
+  // 		() => Array.prototype.slice.call(document.querySelectorAll('figure'))
+  // 		    .map((item) => {
+  // 			return {
+  // 			    image: item.querySelector('img').src,
+  // 			    name: item.attributes["aria-label"],
+  // 			    href: item.querySelector('a').href
+  // 			};
+  // 		    })));
+  // 	}catch(e){
+  // 	    console.error(e);
+  // 	}
+  // 	finally{
+  // 	    resolve(mockData);
+  // 	    browser.close();
+  // 	}
+  //     });
+};
 

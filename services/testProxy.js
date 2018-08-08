@@ -1,20 +1,20 @@
 const mockData = {
-  "ip": "138.130.230.29",
-  "country": "UA",
-  "geoip": 740363905,
-  "asn": {
-    "asnum": 56233,
-    "org_name": "Local Net"
+  'ip': '138.130.230.29',
+  'country': 'UA',
+  'geoip': 740363905,
+  'asn': {
+    'asnum': 56233,
+    'org_name': 'Local Net',
   },
-  "geo": {
-    "city": "Kiev",
-    "region": "30",
-    "postal_code": "04212",
-    "latitude": 50.4333,
-    "longitude": 30.5167,
-    "tz": "Europe/Kiev"
-  }
-}
+  'geo': {
+    'city': 'Kiev',
+    'region': '30',
+    'postal_code': '04212',
+    'latitude': 50.4333,
+    'longitude': 30.5167,
+    'tz': 'Europe/Kiev',
+  },
+};
 
 function rand(items) {
   return items[~~(items.length * Math.random())];
@@ -30,11 +30,11 @@ module.exports = function testProxy() {
         status: code,
         payload: mockData,
       };
-      
+
       resolve(payload);
     } else {
       reject(code);
     }
   });
-}
+};
 

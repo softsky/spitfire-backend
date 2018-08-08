@@ -10,7 +10,7 @@ const clientId = uuid();
 
 const proxy = {
   host: 'zproxy.lum-superproxy.io',
-  port: 22225,      
+  port: 22225,
   auth: {
     username: 'lum-customer-softsky-zone-jp1-country-jp',
     password: '4lz85bmb5tbo',
@@ -28,7 +28,7 @@ function login(username, password) {
     'Origin':           'https://s3.nikecdn.com',
     'Connection':       'keep-alive',
     'User-Agent':       'Mozilla/5.0 (iPhone; CPU iPhone OS 10_2 like Mac OS X) AppleWebKit/602.3.12 (KHTML, like Gecko) Mobile/14C92',
-    'X-NewRelic-ID':    'VQYGVF5SCBADUVBRBgAGVg=='
+    'X-NewRelic-ID':    'VQYGVF5SCBADUVBRBgAGVg==',
   };
 
   const params = {
@@ -42,24 +42,24 @@ function login(username, password) {
     'mobile':             'true',
     'native':             'true',
     'visit':              '1',
-    'visitor':            clientId
+    'visitor':            clientId,
   };
 
   const payload = {
-    "client_id": clientId,
-    "grant_type": "password",
-    "password": password,
-    "username": username,
-    "ux_id": "com.nike.commerce.snkrs.ios",
-  }
+    'client_id': clientId,
+    'grant_type': 'password',
+    password,
+    username,
+    'ux_id': 'com.nike.commerce.snkrs.ios',
+  };
 
   const queryString = qs.stringify(params);
-  
+
   const request = axios.create({
     headers,
     proxy,
     httpAgent: new http.Agent({ keepAlive: true, rejectUnauthorized: false }),
-    httpsAgent: new https.Agent({ keepAlive: true, rejectUnauthorized: false})
+    httpsAgent: new https.Agent({ keepAlive: true, rejectUnauthorized: false }),
   });
 
   return request.post('https://s3.nikecdn.com/login', queryString, payload);
@@ -74,13 +74,13 @@ function minversionRequest() {
     'Accept-Language':  'en-US;q=1',
     'Accept-Encoding':  'gzip, deflate',
     'Connection':       'keep-alive',
-  }
-  
+  };
+
   const request = axios.create({
 	  headers,
 	  proxy,
 	  httpAgent: new http.Agent({ keepAlive: true, rejectUnauthorized: false }),
-	  httpsAgent: new https.Agent({ keepAlive: true, rejectUnauthorized: false})
+	  httpsAgent: new https.Agent({ keepAlive: true, rejectUnauthorized: false }),
   });
 
   return request.get('https://s3.nikecdn.com/minversionapi/iOS.json');
@@ -94,25 +94,25 @@ function mobileRequest() {
     'User-Agent':       'Mozilla/5.0 (iPhone; CPU iPhone OS 10_2 like Mac OS X) AppleWebKit/602.3.12 (KHTML, like Gecko) Mobile/14C92',
     'Accept-Language':  'en-us',
     'Accept-Encoding':  'gzip, deflate',
-    'Connection':       'keep-alive'
+    'Connection':       'keep-alive',
   };
-  
+
   const params = {
     'mid':                '06991873067900528515903792859936812381?iOSSDKVersion=2.8.4',
-    'clientId':           clientId,
+    clientId,
     'uxId':               'com.nike.commerce.snkrs.ios',
     'view':               'none',
     'locale':             'en_US',
-    'backendEnvironment': 'identity'
-  }
+    'backendEnvironment': 'identity',
+  };
 
   const queryString = qs.stringify(params);
-  
+
   const request = axios.create({
     headers,
     proxy,
 	  httpAgent: new http.Agent({ keepAlive: true, rejectUnauthorized: false }),
-	  httpsAgent: new https.Agent({ keepAlive: true, rejectUnauthorized: false})
+	  httpsAgent: new https.Agent({ keepAlive: true, rejectUnauthorized: false }),
   });
 
   return request.get('https://s3.nikecdn.com/unite/mobile.html', queryString);
@@ -128,18 +128,18 @@ function mobileRequest() {
     'Accept-Encoding':  'gzip, deflate',
     'Connection':       'keep-alive',
   };
-  
+
   const params = {
     'mid':                '06991873067900528515903792859936812381?iOSSDKVersion=2.8.4',
-    'clientId':           clientId,
+    clientId,
     'uxId':               'com.nike.commerce.snkrs.ios',
     'view':               'none',
     'locale':             'en_US',
-    'backendEnvironment': 'identity'
-  }
+    'backendEnvironment': 'identity',
+  };
 
   const queryString = qs.stringify(params);
-  
+
   const request = axios.create({
     headers,
     proxy,
@@ -156,23 +156,23 @@ function mobileRequest() {
     'User-Agent':       'Mozilla/5.0 (iPhone; CPU iPhone OS 10_2 like Mac OS X) AppleWebKit/602.3.12 (KHTML, like Gecko) Mobile/14C92',
     'Accept-Language':  'en-us',
     'Accept-Encoding':  'gzip, deflate',
-    'Connection':       'keep-alive'
+    'Connection':       'keep-alive',
   };
-  
+
   const params = {
     'mid':                '06991873067900528515903792859936812381?iOSSDKVersion=2.8.4',
-    'clientId':           clientId,
+    clientId,
     'uxId':               'com.nike.commerce.snkrs.ios',
     'view':               'none',
     'locale':             'en_US',
-    'backendEnvironment': 'identity'
-  }
+    'backendEnvironment': 'identity',
+  };
 
   const queryString = qs.stringify(params);
-  
+
   const request = axios.create({
     headers,
-    proxy
+    proxy,
   });
 
   return request.get('https://s3.nikecdn.com/unite/mobile.html', queryString);
@@ -193,21 +193,21 @@ async function run() {
 }
 
 async function appInitialization() {
-	console.info('before minversionapi');
-	await minversionRequest().then(console.log.bind(console));
-	console.info('before mobileRequest');
-	await mobileRequest().then(console.log.bind(console));
+  console.info('before minversionapi');
+  await minversionRequest().then(console.log.bind(console));
+  console.info('before mobileRequest');
+  await mobileRequest().then(console.log.bind(console));
 }
 
 async function run() {
-	try {
-		console.info('before init');
-		await appInitialization();
-		console.info('before login');
-		await login();
-	} catch (error) {
-		console.error('error', error);
-	}
+  try {
+    console.info('before init');
+    await appInitialization();
+    console.info('before login');
+    await login();
+  } catch (error) {
+    console.error('error', error);
+  }
 }
 
 

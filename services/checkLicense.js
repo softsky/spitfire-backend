@@ -20,5 +20,5 @@ module.exports = function checkLicense(key) {
 
   const request = axios.create({ headers });
   return request.post(URL, payload);
-}
+};
 
