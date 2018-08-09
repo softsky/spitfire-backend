@@ -12,6 +12,13 @@
         "spread": true
       }
     },
+   "globals": {
+     "console": true,
+     "describe": true,
+     "it": true,
+     "beforeAll": true,
+     "afterAll": true
+    },
     "rules": {
         "comma-dangle": ["error", "always-multiline"],
         "comma-spacing": ["error", { "before": false, "after": true }],
