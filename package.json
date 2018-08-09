@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-      "test": "jest --coverage",
-      "lint": "./node_modules/.bin/eslint **/*.js"
+    "test": "jest --coverage",
+    "lint": "./node_modules/.bin/eslint **/*.js"
   },
   "author": "",
   "license": "ISC",
@@ -29,6 +29,7 @@
     "proxy-chain": "^0.2.3",
     "puppeteer": "^1.5.0",
     "qs": "^6.5.2",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "winston": "^3.0.0"
   }
 }
