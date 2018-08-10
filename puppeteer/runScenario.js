@@ -69,15 +69,18 @@ const initProxies = async () => {
     }));
 
   // shuffling our array of pairs
-  // shuffle(paPairs); // TODO: uncomment that
+  shuffle(paPairs); // TODO: uncomment that
 
   return paPairs;
 };
 
-const runScenarios = async (scenarioFunctionArray) => {
+const runScenarios = async (scenarioFunctionArray, options) => {
   const paPairs = await initProxies(); // we should make sure our proxies are loaded
 
-  const { proxy, account } = paPairs.pop();
+  const obj = paPairs.shift();
+  Object.assign(obj, options);
+  const { proxy, account } = obj;
+
   const oldProxyUrl = `http://${proxy.user}:${proxy.pwd}@${proxy.ip}:${proxy.port}`;
   const proxyUrl = await proxyChain.anonymizeProxy(oldProxyUrl);
   //require('events').EventEmitter.prototype.setMaxListeners(50);
@@ -97,47 +100,39 @@ const runScenarios = async (scenarioFunctionArray) => {
   if(proxyUrl){
     args.push(`--proxy-server=${proxyUrl}`);
   }
-  //args.push('https://www.nike.com/jp/launch/');
   let browser;
   try {
     browser = await puppeteer.launch({
       headless: false,
-      devtools: true,
+      devtools: false,
       slowMo: 50,
       ignoreHTTPSErrors: true,
       args,
     });
     logger.debug('Running');
     const page = (await browser.pages())[0];
+    await page.setViewport({ width: 800, height: 1366 });
     await page.goto('https://www.nike.com/jp/launch', {
       waitUntil: ['domcontentloaded', 'networkidle2'],
     });
-    await page.setViewport({ width: 375, height: 812 });
 
     if (Array.isArray(scenarioFunctionArray) == false)
       throw new Error('scenarioFunctionArray should be an array');
     // executing one by one
-    // while(scenarioFunctionArray.length > 0){
-    //   const f = scenarioFunctionArray.pop();
-    //   logger.info(`Executing scenario function ${f}`);
-    //   await f({ account, proxy }, { page, logger });
-    // }
-    const series =
-          Array(scenarioFunctionArray.length)
-          .fill(() => scenarioFunctionArray.pop()({ account, proxy }, { page, logger }));
-
-    async.everySeries(series);
+    while(scenarioFunctionArray.length > 0){
+      const f = scenarioFunctionArray.shift();
+      logger.info(`Executing scenario function ${JSON.stringify(obj, { page, logger })}`);
+      await f(obj, { page, logger });
+    }
 
     logger.debug('Scenarios execution finished');
-
-    browser.close();
   } catch (e) {
     // restoring proxy, account in our stack in case of exception
     logger.info(`Storing ${JSON.stringify({ proxy, account })} back to Stack`);
     paPairs.push({ account, proxy });
     throw e;
   } finally {
-    //will change once order functionality is done
+    //browser.close();
   }
 };
 

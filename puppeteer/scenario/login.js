@@ -12,8 +12,7 @@ module.exports = async (options, env) => {
     await page.waitForSelector('input[type="password"]');
     await page.type('input[type="password"]', account.password);
     await page.click('input[type="button"][value="ログイン"]');
-    logger.info('hello');
-    page.waitForSelector('a.shopping-cart.jewel-cart-container');
+    await page.waitForSelector('img[data-qa="portrait-img"]');
   }catch(e){
     logger.error(e);
   }
