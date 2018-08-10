@@ -3,13 +3,14 @@ const axios = require('axios-https-proxy-fix');
 const get = require('lodash/get');
 const formatCurrency = require('format-currency');
 const moment = require('moment');
+const logger = require('../utils/logger');
 
 
 // TODO: make it readable
 const URL = 'https://api.nike.com/product_feed/threads/v2/?anchor=0&count=8&filter=marketplace%28JP%29&filter=language%28ja%29&filter=channelId%28010794e5-35fe-4e32-aaff-cd2c74f89d61%29&filter=exclusiveAccess%28true%2Cfalse%29&fields=active&fields=id&fields=lastFetchTime&fields=productInfo&fields=publishedContent.nodes&fields=publishedContent.properties.coverCard&fields=publishedContent.properties.productCard&fields=publishedContent.properties.products&fields=publishedContent.properties.publish.collections&fields=publishedContent.properties.relatedThreads&fields=publishedContent.properties.seo&fields=publishedContent.properties.threadType&fields=publishedContent.properties.custom';
 
 module.exports = function fetchNewReleases() {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
 
     try {
       const response = await axios.get(URL);
@@ -32,7 +33,7 @@ module.exports = function fetchNewReleases() {
 
       resolve(payload);
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       reject(error);
     }
   });
@@ -40,7 +41,7 @@ module.exports = function fetchNewReleases() {
   //     return new Promise(async (resolve) => {
   // 	let mockData = [];
   // 	// P.runScenario(() => {
-  // 	//     console.log('hello from test')
+  // 	//     logger.log('hello from test')
   // 	// })
   // 	let browser;
   // 	try {
@@ -59,7 +60,7 @@ module.exports = function fetchNewReleases() {
   // 			};
   // 		    })));
   // 	}catch(e){
-  // 	    console.error(e);
+  // 	    logger.error(e);
   // 	}
   // 	finally{
   // 	    resolve(mockData);
@@ -67,4 +68,3 @@ module.exports = function fetchNewReleases() {
   // 	}
   //     });
 };
-
