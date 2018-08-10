@@ -6,24 +6,24 @@ const expect = chai.expect;
 describe('Puppeteer testing suite', () => {
   const { runScenarios, initProxies } = require('./runScenario');
 
-  // describe('Single Scenario',  () => {
-  //   it('Should properly load and execute single login scenario', async () => {
-  //     const injector = async (options, env) => {
-  //       const { page, logger } = env;
-  //       expect(options).is.an('object');
-  //       expect(env).is.an('object');
-  //       expect(options).has.property('account').is.an('object');
-  //       expect(options).has.property('proxy').is.an('object');
-  //       expect(env).has.property('page').is.an('object');
-  //       expect(env).has.property('logger').is.an('object');
-  //       page.waitForSelector('img[data-qa="portrait-img"]', { timeout: 100 }); // should already be here
+  describe('Single Scenario',  () => {
+    it('Should properly load and execute single login scenario', async () => {
+      const injector = async (options, env) => {
+        const { page, logger } = env;
+        expect(options).is.an('object');
+        expect(env).is.an('object');
+        expect(options).has.property('account').is.an('object');
+        expect(options).has.property('proxy').is.an('object');
+        expect(env).has.property('page').is.an('object');
+        expect(env).has.property('logger').is.an('object');
+        page.waitForSelector('img[data-qa="portrait-img"]', { timeout: 100 }); // should already be here
 
-  //     };
-  //     const login = require('./scenario/login');
+      };
+      const login = require('./scenario/login');
 
-  //     return runScenarios([login, injector]);
-  //   }, 30000);
-  // });
+      return runScenarios([login, injector]);
+    }, 30000);
+  });
 
   // describe('Multiple Scenarios',  () => {
   //   it('Should properly load and execute set of scenarios', async () => {

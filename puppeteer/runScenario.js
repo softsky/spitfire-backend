@@ -103,7 +103,7 @@ const runScenarios = async (scenarioFunctionArray, options) => {
   let browser;
   try {
     browser = await puppeteer.launch({
-      headless: false,
+      headless: true,
       devtools: false,
       slowMo: 50,
       ignoreHTTPSErrors: true,
