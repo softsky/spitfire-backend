@@ -18,4 +18,3 @@ describe('Puppeteer testing suite', () => {
     });
   });
 });
-
