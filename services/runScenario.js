@@ -1,13 +1,11 @@
 const proxyChain = require('proxy-chain');
 const csv = require('csv');
-const async = require('async');
 const puppeteer = require('puppeteer');
 const logger = require('../utils/logger');
 
 const paPairs = [];
 const accounts = [];
 const proxies = [];
-const numSeries = 1;
 
 
 /**
@@ -22,51 +20,56 @@ function shuffle(a) {
   return a;
 }
 
-const initProxies = async () => {
 
+const initProxies = async () => {
   // if already filled, return
-  if(paPairs.length){
+  if (paPairs.length) {
     return paPairs;
   }
 
-  const stream = require('stream');
-  const util = require('util');
   const fs = require('fs');
-
-  const pipeline = util.promisify(stream.pipeline);
-
   const accountPath = __dirname + '/../accounts.csv';
   const proxyPath = __dirname + '/../proxies.csv';
-  const accountStream = fs.createReadStream(accountPath);
-  const proxyStream = fs.createReadStream(proxyPath);
 
-  // FIXME:
-  await pipeline(
-    proxyStream,
-    csv.parse({ delimiter: ':' }),
-    csv.transform((record) => {
-      const proxy = {
-        ip: record[0],
-        port: record[1],
-        user: record[2],
-        pwd: record[3],
-      };
-      proxies.push(proxy);
-    }));
+  // we can't use pipline for current node version
+  const getProxies = () => new Promise((resolve, reject) => (
+    fs.createReadStream(proxyPath)
+      .on('end', resolve)
+      .on('error', reject)
+      .pipe(csv.parse({ delimiter: ':' }))
+      .pipe(csv.transform((record) => {
+        const proxy = {
+          ip: record[0],
+          port: record[1],
+          user: record[2],
+          pwd: record[3],
+        };
 
-  await pipeline(
-    accountStream,
-    csv.parse({ delimiter: ':' }),
-    csv.transform((record) => {
-      proxies.unshift(proxies.pop());
-      const username = record[0];
-      const password = record[1];
-      const account = { username, password };
-      const proxy = proxies[0];
-      accounts.push(account);
+        // FIXME: we should be able to get data from a promise
+        proxies.push(proxy);
+      }))
+  ));
 
-      paPairs.push({ proxy, account });
-    }));
+  const getAccounts = () => new Promise((resolve, reject) => (
+    fs.createReadStream(accountPath)
+      .on('end', resolve)
+      .on('error', reject)
+      .pipe(csv.parse({ delimiter: ':' }))
+      .pipe(csv.transform((record) => {
+        proxies.unshift(proxies.pop());
+        const username = record[0];
+        const password = record[1];
+        const account = { username, password };
+        const proxy = proxies[0];
+        accounts.push(account);
+
+        // FIXME: we should be able to get data from a promise
+        paPairs.push({ proxy, account });
+      }))
+  ));
+
+  await getProxies();
+  await getAccounts();
 
   // shuffling our array of pairs
   shuffle(paPairs); // TODO: uncomment that
@@ -78,6 +81,7 @@ const runScenarios = async (scenarioFunctionArray, options) => {
   const paPairs = await initProxies(); // we should make sure our proxies are loaded
 
   const obj = paPairs.shift();
+
   Object.assign(obj, options);
   const { proxy, account } = obj;
 
