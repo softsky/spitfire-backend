@@ -13,7 +13,7 @@ module.exports = async (options, env) => {
     await page.type('input[type="password"]', account.password);
     await page.click('input[type="button"][value="ログイン"]');
     await page.waitForSelector('img[data-qa="portrait-img"]');
-  }catch(e){
+  } catch(e) {
     logger.error(e);
   }
 };
