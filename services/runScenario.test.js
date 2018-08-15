@@ -94,6 +94,4 @@ describe('Puppeteer testing suite', () => {
   //     // 06/2020
   //     return runScenarios([login, injector,  purchase_select_product, purchase_shipping, purchase_payment, logout], { order });
   //   }, 120000);
-  });
-
 });

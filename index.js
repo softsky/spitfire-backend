@@ -2,8 +2,14 @@ const path = require('path');
 const url = require('url');
 const fs = require('fs');
 const { ipcMain: ipc, app, BrowserWindow } = require('electron');
+const logger = require('./utils/logger');
 const fetchNewReleases = require('./services/newReleases');
 const checkLicense = require('./services/checkLicense');
+
+const { runScenarios } = require('./services/runScenario');
+const loginScenario = require('./services/scenario/login');
+const purchaseSelectProductScenario = require('./services/scenario/purchase-select-product');
+
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
@@ -50,13 +56,61 @@ class App {
     ipc.on('RUN_TASK', this.runTask.bind(this));
   }
 
-  runTask(action, task) {
-    // TODO: invoke some function or a puppeteer scenario to perform a task there
+  async runTask(action, task) {
 
-    // just to make syre that it works
-    setTimeout(() => {
-      this.updateTaskStatus(task.id, 'completed');
-    }, 1000);
+    try {
+      // TODO: run scenarios should be refactored,
+      // so it can inform in some way that a scenario was completed successfully.
+      // Then we will be able to run an array of scenarios.
+      await runScenarios([loginScenario]);
+      this.updateTaskStatus(task.id, 'logged in');
+
+      // TODO: take it from the task or sth like that,
+      // anyway, it shouldn't be hardcoded
+      const order =  {
+        sku: task.sku,
+        show_size: '',
+        'Name': 'shunya',
+        'BillingFirstName': 'NAME',
+        'BillingAltFirstName': 'FURIGANA',
+        'BillingLastName': 'F NAME',
+        'BillingAltLastName': 'F FURIGANA',
+        'BillingAddress1': '緑区２－１１%num1%-%num3%',
+        'BillingAddress2': '%CHAR1%棟',
+        'BillingAddress3': '町屋',
+        'BillingZipCode': '252-0101',
+        'BillingPhone': '080%num8%',
+        'BillingCity': '相模原市',
+        'BillingState': '',
+        'BillingStateJP': 'JP-03',
+        'ShippingFirstName': 'NAME',
+        'ShippingAltFirstName': 'FURIGANA',
+        'ShippingLastName': 'F NAME',
+        'ShippingAltLastName': 'F FURIGANA',
+        'ShippingAddress1': '緑区2',
+        'ShippingAddress2': '棟',
+        'ShippingAddress3': '町屋',
+        'ShippingZipCode': '252-0101',
+        'ShippingPhone': '080%num8%',
+        'ShippingCity': '相模原市',
+        'ShippingState': '',
+        'ShippingStateJP': 'JP-03',
+        'CreditCardType': 'Visa',
+        'CreditCardNumber': '4790794040508750',
+        'CreditCardExpiryMonth': '06',
+        'CreditCardExpiryYear': '2022',
+        'CreditCardCvv': '899',
+        'ShippingAddressSame': true,
+        'MaxCheckouts': 0,
+      };
+
+      await runScenarios([purchaseSelectProductScenario], { order });
+      this.updateTaskStatus(task.id, 'product selected');
+
+    } catch (error) {
+      logger.error(error);
+      this.updateTaskStatus(task.id, 'failed');
+    }
   }
 
   updateTaskStatus(id, status) {
