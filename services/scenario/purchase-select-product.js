@@ -13,7 +13,6 @@ module.exports = async (options, env) => {
   const [el] = await page.$x(elementSelector);
   await el.click();
   await page.waitForSelector('.size-grid-dropdown.size-dropdown-button-css');
-
   await page.click('.size-grid-dropdown.size-dropdown-button-css');
   await page.waitForSelector('.size-grid-dropdown.size-grid-button');
   const size_buttons = await page.$('.size-grid-dropdown.size-grid-button');// ie options.order.show_size
